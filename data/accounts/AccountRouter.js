@@ -32,11 +32,34 @@ router.get('/:id', (req, res) => {
 })
 
 router.post('/', (req, res) => {
+    const postData = req.body;
 
+    knex('accounts')
+        .insert(postData, 'id')
+        .then(ids => {
+            const id = ids[0];
+            res.status(200).json(id);
+        })
+        .catch(error => {
+            console.log(error);
+            res.status(500).json({ errorMessage: 'Error posting' })
+        })
 })
 
 router.put('/:id', (req, res) => {
+    const { id } = req.params;
+    const changes = req.body;
 
+    knex('accounts')
+        .where({ id })
+        .update(changes)
+        .then(count => {
+            res.status(200).json({ message: `${count} record(s) updated` })
+        })
+        .catch(error => {
+            console.log(error);
+            res.status(500).json({ errorMessage: 'Error updating' })
+        })
 })
 
 router.delete('/:id', (req, res) => {
